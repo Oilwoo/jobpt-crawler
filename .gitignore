@@ -1,0 +1,47 @@
+# 환경변수 (API 키 포함) - 절대 커밋하면 안됨!
+.env
+*.env
+config/.env
+
+# 가상환경
+venv/
+env/
+ENV/
+__pycache__/
+*.py[cod]
+*$py.class
+
+# 로그 파일
+logs/
+*.log
+nohup.out
+
+# 데이터 파일
+data/
+*.json
+*.csv
+*.xlsx
+
+# Chrome 관련
+chromedriver
+chromedriver.exe
+
+# IDE 설정
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# 시스템 파일
+.DS_Store
+Thumbs.db
+
+# 백업 파일
+*.bak
+*.backup
+*~
+
+# 임시 파일
+*.tmp
+*.temp
+EOF
