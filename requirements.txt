@@ -12,6 +12,3 @@ langchain-upstage
 
 # 환경 설정
 python-dotenv==1.0.0
-
-# 선택사항: 자동 드라이버 관리
-webdriver-manager

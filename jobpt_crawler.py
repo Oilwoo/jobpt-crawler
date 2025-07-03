@@ -48,8 +48,8 @@ BASE_URL = "https://www.wanted.co.kr"
 LIST_URL = BASE_URL + "/wdlist?country=kr&job_sort=job.popularity_order&years=-1&locations=all"
 
 def clean(text: str) -> str:
-    """텍스트 정리 함수"""
-    if not text:
+    """텍스트 정리 함수 (타입 체크 추가)"""
+    if not isinstance(text, str):
         return ""
     return (
         text.replace("•", "")
@@ -372,38 +372,35 @@ class JobCrawlerPinecone:
         return jobs
 
     def create_documents(self, jobs):
-        """채용공고 데이터를 Document 객체로 변환"""
+        """채용공고 데이터를 Document 객체로 변환 (신입경력, source_file, original_url 필드 반영)"""
         documents = []
-        
         for job in jobs:
-            # 모든 상세 정보를 하나의 텍스트로 병합
+            desc = job
             merged_text = " | ".join([
-                f"회사: {job.get('company', '')}",
-                f"포지션: {job.get('title', '')}",
-                f"근무지역: {job.get('근무지역', '')}",
-                f"마감일: {job.get('마감일', '')}",
-                f"포지션상세: {clean(job.get('포지션상세', ''))}",
-                f"주요업무: {clean(job.get('주요업무', ''))}",
-                f"자격요건: {clean(job.get('자격요건', ''))}",
-                f"우대사항: {clean(job.get('우대사항', ''))}",
-                f"채용 전형: {clean(job.get('채용 전형', ''))}",
-                f"혜택 및 복지: {clean(job.get('혜택 및 복지', ''))}"
+                f"url: {job.get('url', '')}",
+                f"title: {job.get('title', '')}",
+                f"company: {job.get('company', '')}",
+                f"마감일: {job.get('마감일','')}",
+                f"근무지역: {clean(job.get('근무지역',''))}",
+                f"신입경력: {clean(job.get('신입경력', ''))}",
+                f"포지션상세: {clean(desc.get('포지션상세', ''))}",
+                f"주요업무: {clean(desc.get('주요업무', ''))}",
+                f"자격요건: {clean(desc.get('자격요건', ''))}",
+                f"우대사항: {clean(desc.get('우대사항', ''))}",
+                f"채용 전형: {clean(desc.get('채용 전형', ''))}",
+                f"혜택 및 복지: {clean(desc.get('혜택 및 복지', ''))}",
             ])
-            
-            # 메타데이터 구성
             metadata = {
                 "url": job.get("url", ""),
                 "title": job.get("title", ""),
                 "company": job.get("company", ""),
-                "location": job.get("근무지역", ""),
-                "deadline": job.get("마감일", ""),
-                "source": job.get("source", "wanted"),
-                "crawled_at": job.get("crawled_at", ""),
-                "link_index": job.get("link_index", 0)
+                "마감일": job.get("마감일",""),
+                "근무지역": job.get("근무지역",""),
+                "신입경력": job.get("신입경력",""),
+                "source_file": job.get("metadata", {}).get("source_file", ""),
+                "original_url": job.get("metadata", {}).get("original_url", ""),
             }
-            
             documents.append(Document(page_content=merged_text, metadata=metadata))
-        
         logger.info(f"{len(documents)}개 Document 객체 생성")
         return documents
 
